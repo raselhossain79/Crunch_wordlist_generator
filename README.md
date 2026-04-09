@@ -146,20 +146,20 @@ Creates new file after every 50,000 lines.
 
 ## Practical Examples
 
-### Example 1: Generate Phone Numbers with Fixed Prefix
-**Scenario:** Generate numbers starting with `01712` with unknown digits XX at positions 6-7, followed by `3456`.
+### Example 1: Generate Number Sequence with Unknown Digits
+**Scenario:** Generate 11-digit numbers with fixed prefix and suffix, with 2 unknown digits in the middle.
 
 ```bash
-crunch 11 11 -t 01712%%3456 -o phone_numbers.txt
+crunch 11 11 -t 23456%%8554 -o number_list.txt
 ```
 
 **Output:**
 ```
-01712003456
-01712013456
-01712023456
+23456008554
+23456018554
+23456028554
 ...
-01712993456
+23456998554
 ```
 **Total combinations:** 100
 
@@ -225,7 +225,7 @@ The symbols `@`, `,`, `%`, and `^` have special meanings in Crunch. If you want 
 
 ### Example 1: Fixed @ Symbol
 ```bash
-crunch 4 4 -t ab\@c
+crunch 4 4 -t "ab\@c"
 ```
 **Output:**
 ```
@@ -236,7 +236,7 @@ ab@c
 
 ### Example 2: Fixed % Symbol
 ```bash
-crunch 6 6 -t pass\%% 
+crunch 6 6 -t "pass\%%" 
 ```
 **Output:**
 ```
@@ -248,44 +248,68 @@ pass%99
 
 ---
 
-### Example 3: Mixed Fixed and Variable
+### Example 3: Mixed Fixed and Variable Special Characters
 ```bash
-crunch 8 8 -t User\@%%@@
+crunch 8 8 -t "num\@%%\@\@"
 ```
 **Components:**
-- `User` = fixed
+- `num` = fixed
 - `\@` = fixed `@` character
 - `%%` = brute-force 2 digits (00-99)
-- `@@` = brute-force 2 lowercase letters (aa-zz)
+- `\@\@` = fixed `@@` (two @ symbols)
 
 **Output Examples:**
 ```
-User@00aa
-User@00ab
-User@00ac
+num@00@@
+num@01@@
+num@02@@
 ...
-User@99zz
+num@99@@
 ```
 
 ---
 
-### Example 4: Using Quotes (Recommended for Safety)
+### Example 4: Best Practice - Always Use Quotes
 ```bash
-crunch 4 4 -t "ab\@c"
+crunch 7 7 -t "data\@%%"
 ```
-Using quotes with escape sequences provides the safest approach.
+Using quotes with escape sequences provides the safest and most reliable approach.
 
 ---
 
 ## Advanced Usage
 
-### Combining Multiple Options
+### Option 1: Split by File Size (-b)
 ```bash
-crunch 6 6 -t "ab\@%%" -o wordlist.txt -b 5MB -l 100000 START
+crunch 6 6 -t "ab\@%%" -b 5MB -o START
 ```
-- Pattern: `ab@` (fixed) + 2 variable digits
-- Output: split into files with 100,000 lines max OR 5MB max
-- Files created: `START1`, `START2`, etc.
+**Components:**
+- `6 6` = 6-character output
+- `-t "ab\@%%"` = Pattern (ab@ fixed + 2 variable digits)
+- `-b 5MB` = Split files at 5MB limit
+- `-o START` = Create files: START1, START2, START3, etc.
+
+**Output:**
+- `START1` (5MB or less)
+- `START2` (5MB or less)
+- `START3` (remaining)
+
+---
+
+### Option 2: Split by Line Count (-l)
+```bash
+crunch 6 6 -t "ab\@%%" -l 100000 -o START
+```
+**Components:**
+- `6 6` = 6-character output
+- `-t "ab\@%%"` = Pattern (ab@ fixed + 2 variable digits)
+- `-l 100000` = Split into files with 100,000 lines each
+- `-o START` = Create files: START1, START2, START3, etc.
+
+**Output:**
+- `START1` (100,000 lines)
+- `START2` (100,000 lines)
+- `START3` (remaining lines)
 
 ---
 
@@ -446,12 +470,13 @@ crunch 4 4 | wc -l
 | Task | Command |
 |------|---------|
 | Generate 4-digit numbers | `crunch 4 4 -o output.txt` |
-| Pattern: unknown digits | `crunch 11 11 -t 01712%%3456` |
+| Pattern: unknown digits | `crunch 11 11 -t 23456%%8554` |
 | Pattern: letters + digits | `crunch 8 8 -t "pass@@%%"` |
 | Fixed special character | `crunch 4 4 -t "ab\@c"` |
 | Start from specific point | `crunch 2 2 -s 50 -o output.txt` |
 | End at specific point | `crunch 2 2 -e 55 -o output.txt` |
-| Split into multiple files | `crunch 5 5 -b 50MB -o START` |
+| Split by file size | `crunch 5 5 -b 50MB -o START` |
+| Split by line count | `crunch 5 5 -l 100000 -o START` |
 | Count total lines | `crunch 3 3 \| wc -l` |
 
 ---
@@ -467,4 +492,3 @@ crunch 4 4 | wc -l
 **Last Updated:** April 2026  
 **Difficulty Level:** Beginner to Intermediate  
 **Prerequisites:** Basic Linux command-line knowledge
-# Crunch_wordlist_generator
