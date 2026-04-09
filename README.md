@@ -345,10 +345,10 @@ crunch 8 8 -t pass%%%% | john --wordlist=- hash.txt
 ### ❌ Mistake 1: Wrong Symbol for Digits
 ```bash
 # WRONG - @ is for letters, not digits
-crunch 11 11 -t 01712@@3456
+crunch 11 11 -t 91712@@3456
 
 # CORRECT - % is for digits
-crunch 11 11 -t 01712%%3456
+crunch 11 11 -t 91712%%3456
 ```
 
 ---
@@ -356,10 +356,10 @@ crunch 11 11 -t 01712%%3456
 ### ❌ Mistake 2: Incorrect Length
 ```bash
 # WRONG - pattern length (10) doesn't match specified length (11)
-crunch 11 11 -t 0171203456
+crunch 11 11 -t 9171203456
 
 # CORRECT - pattern must be 11 characters total
-crunch 11 11 -t 01712%%3456
+crunch 11 11 -t 91712%%3456
 ```
 
 ---
@@ -408,7 +408,7 @@ crunch 8 8 -t "pass\@%%" -o output.txt
 Before generating large lists, verify your pattern length:
 ```bash
 # Count pattern characters (using echo)
-echo "01712%%3456" | wc -c
+echo "91712%%3456" | wc -c
 # Output should match your min/max length
 ```
 
@@ -488,7 +488,3 @@ crunch 4 4 | wc -l
 - Related Tools: `hashcat`, `John the Ripper`, `Hydra`, `Burp Suite`
 
 ---
-
-**Last Updated:** April 2026  
-**Difficulty Level:** Beginner to Intermediate  
-**Prerequisites:** Basic Linux command-line knowledge
